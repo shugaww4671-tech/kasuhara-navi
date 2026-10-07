@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#1F3864">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="カスハラナビ">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="apple-touch-icon.png">
+<title>カスハラ対応ナビ</title>
+<style>
+:root{color-scheme:light;--navy:#1F3864;--navy2:#2E4D85;--red:#C00000;--red2:#FDECEC;--yel:#FFD966;--yel2:#FFF6D6;--bg:#F3F5F9;--line:#D9DFEA;--txt:#1A1A1A;--sub:#5B6475}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:"BIZ UDPGothic","BIZ UDPゴシック","Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%}
+.wrap{max-width:560px;margin:0 auto;padding:0 14px 120px}
+header{background:var(--navy);color:#fff;position:sticky;top:0;padding-top:env(safe-area-inset-top,0px);z-index:20;border-bottom:4px solid var(--red)}
+header .in{max-width:560px;margin:0 auto;padding:10px 14px;display:flex;align-items:center;gap:10px}
+header h1{font-size:18px;margin:0;flex:1;letter-spacing:.02em}
+header small{display:block;font-size:11px;color:#C9D3E6;font-weight:normal}
+.timer{background:rgba(255,255,255,.12);border-radius:20px;padding:4px 12px;font-size:14px;font-variant-numeric:tabular-nums;display:none}
+.timer.on{display:block}
+/* SOS bar */
+.sos{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:1px solid var(--line);box-shadow:0 -4px 14px rgba(0,0,0,.08);padding:8px 10px calc(8px + env(safe-area-inset-bottom))}
+.sos .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:8px}
+.sos a,.sos button{display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;border:0;border-radius:14px;padding:8px 4px;font:inherit;font-weight:700;font-size:13px;line-height:1.25;cursor:pointer;min-height:58px}
+.sos .p110{background:var(--red);color:#fff;font-size:15px}
+.sos .p110 b{font-size:22px}
+.sos .boss{background:var(--navy);color:#fff}
+.sos .soumu{background:var(--navy2);color:#fff}
+.sos .dim{opacity:.55}
+/* tabs */
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:14px 0}
+.tabs button{border:2px solid var(--navy);background:#fff;color:var(--navy);border-radius:12px;padding:10px 4px;font:inherit;font-weight:700;font-size:14px;cursor:pointer}
+.tabs button.act{background:var(--navy);color:#fff}
+.card{background:#fff;border-radius:18px;padding:18px;margin:12px 0;box-shadow:0 2px 10px rgba(31,56,100,.08)}
+.card.red{border:2px solid var(--red);background:var(--red2)}
+.card.yel{background:var(--yel2);border:2px solid var(--yel)}
+.q{font-size:20px;font-weight:700;color:var(--navy);margin:0 0 4px}
+.qs{color:var(--sub);font-size:14px;margin:0 0 14px}
+.step{display:inline-block;background:var(--navy);color:#fff;border-radius:20px;font-size:12px;padding:2px 10px;margin-bottom:8px;font-weight:700}
+.step.r{background:var(--red)}
+.btns{display:grid;gap:10px}
+.btns.two{grid-template-columns:1fr 1fr}
+.b{display:block;width:100%;border:0;border-radius:14px;padding:15px 14px;font:inherit;font-size:17px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none}
+.b.navy{background:var(--navy);color:#fff}
+.b.red{background:var(--red);color:#fff}
+.b.wh{background:#fff;color:var(--navy);border:2px solid var(--navy)}
+.b.yel{background:var(--yel);color:var(--navy)}
+.b.gray{background:#E7EBF2;color:var(--sub);font-size:15px}
+.b small{display:block;font-weight:normal;font-size:12px;opacity:.85}
+.phr{background:#fff;border-left:6px solid var(--navy);border-radius:12px;padding:14px 16px;margin:10px 0;font-size:19px;line-height:1.7;font-weight:700}
+.phr.r{border-left-color:var(--red)}
+.phr .lb{display:block;font-size:12px;color:var(--sub);font-weight:700;margin-bottom:2px}
+ul.chk{list-style:none;margin:0;padding:0}
+ul.chk li{margin:6px 0}
+ul.chk label{display:flex;gap:12px;align-items:center;background:#F7F9FC;border:2px solid var(--line);border-radius:12px;padding:12px;font-weight:700;cursor:pointer}
+ul.chk input{width:22px;height:22px;accent-color:var(--red);flex:0 0 auto}
+ul.chk label:has(input:checked){border-color:var(--red);background:var(--red2)}
+ul.pt{margin:6px 0 0;padding-left:1.2em}
+ul.pt li{margin:4px 0}
+.back{background:none;border:0;color:var(--sub);font:inherit;font-size:14px;padding:8px 0;cursor:pointer;text-decoration:underline}
+.memo{margin-top:12px}
+label.f{display:block;font-weight:700;font-size:14px;color:var(--navy);margin:14px 0 4px}
+label.f em{font-style:normal;color:var(--red);font-size:12px;margin-left:6px}
+input.t,select.t,textarea.t{width:100%;font:inherit;font-size:16px;border:2px solid var(--line);border-radius:10px;padding:10px;background:#fff;color:var(--txt)}
+textarea.t{min-height:84px;resize:vertical}
+input.t:focus,select.t:focus,textarea.t:focus{outline:none;border-color:var(--navy)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.note{font-size:13px;color:var(--sub)}
+.warnbox{background:var(--red2);border-radius:12px;padding:10px 12px;font-size:13px;color:#7A0000;margin:10px 0}
+.ng{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.ng div{background:var(--red2);border-radius:10px;padding:8px 10px;font-size:13px;font-weight:700;color:#7A0000}
+.ng div::before{content:"× ";color:var(--red)}
+h2{font-size:18px;color:var(--navy);margin:18px 0 6px}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 18px;border-radius:24px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:40}
+.toast.on{opacity:1}
+.hide{display:none!important}
+.kv{display:grid;grid-template-columns:7.5em 1fr;gap:4px 10px;font-size:14px}
+.kv b{color:var(--navy)}
+</style>
+</head>
+<body>
+<header><div class="in">
+  <h1>カスハラ対応ナビ<small>株式会社エムズアーキプランニング　社員用</small></h1>
+  <div class="timer" id="timer">対応 0:00</div>
+</div></header>
+
+<div class="wrap">
+  <div class="tabs">
+    <button data-tab="navi" class="act">対応中ナビ</button>
+    <button data-tab="rec">対応記録</button>
+    <button data-tab="set">相談先の登録</button>
+  </div>
+
+  <!-- ===== NAVI ===== -->
+  <section id="tab-navi">
+    <div id="navi"></div>
+    <div class="card memo" id="memoCard">
+      <label class="f" for="memo">言われた言葉をメモ<em>できるだけそのまま</em></label>
+      <textarea class="t" id="memo" placeholder="例：「責任者を出せ。今すぐ来い」（14:05）"></textarea>
+      <div class="note">このメモは「対応記録」にそのまま引き継がれます。</div>
+    </div>
+  </section>
+
+  <!-- ===== RECORD ===== -->
+  <section id="tab-rec" class="hide">
+    <div class="card">
+      <p class="q">対応記録</p>
+      <p class="qs">記憶が新しいうちに入力し、上司・管理職／総務へ報告してください。</p>
+      <div class="warnbox">個人情報を含みます。報告後は「この端末から消去」を押してください。録音・メールなどの証拠は削除せず保存してください。</div>
+      <div class="row2">
+        <div><label class="f" for="r_date">発生日</label><input class="t" type="date" id="r_date"></div>
+        <div><label class="f" for="r_time">時刻</label><input class="t" type="time" id="r_time"></div>
+      </div>
+      <div class="row2">
+        <div><label class="f" for="r_min">対応時間（分）</label><input class="t" type="number" min="0" inputmode="numeric" id="r_min"></div>
+        <div><label class="f" for="r_way">手段</label>
+          <select class="t" id="r_way"><option value="">選択</option><option>電話</option><option>メール</option><option>対面</option><option>訪問</option><option>その他</option></select></div>
+      </div>
+      <label class="f" for="r_who">相手方（会社名・氏名）</label><input class="t" id="r_who">
+      <label class="f" for="r_words">言われた言葉・されたこと<em>できるだけそのまま</em></label><textarea class="t" id="r_words"></textarea>
+      <label class="f" for="r_sum">内容の要約<em>証拠のファイル名もここに</em></label><textarea class="t" id="r_sum" placeholder="例：工期遅延への抗議から暴言に。録音：20261015_A社_電話.m4a"></textarea>
+      <label class="f" for="r_req">要求内容</label><textarea class="t" id="r_req"></textarea>
+      <label class="f" for="r_act">対応内容（自分の説明・返答）</label><textarea class="t" id="r_act"></textarea>
+      <div class="row2">
+        <div><label class="f" for="r_me">対応者</label><input class="t" id="r_me"></div>
+        <div><label class="f" for="r_with">同席者</label><input class="t" id="r_with"></div>
+      </div>
+      <div class="row2">
+        <div><label class="f" for="r_to">報告先</label>
+          <select class="t" id="r_to"><option value="">選択</option><option>上司・管理職</option><option>総務</option></select></div>
+        <div><label class="f" for="r_st">対応状況</label>
+          <select class="t" id="r_st"><option>対応中</option><option>終了</option><option>外部相談</option></select></div>
+      </div>
+      <label class="f" for="r_self">自分への影響<em>任意</em></label><textarea class="t" id="r_self" placeholder="体調や気持ちの変化も書いてOK"></textarea>
+    </div>
+    <div class="btns">
+      <button class="b red" id="copyText">報告文をコピー<small>Teamsのチャットに貼り付けて、上司・管理職／総務へ報告</small></button>
+      <button class="b navy" id="sendMail">メールで報告する<small>メールが開かない場合は「報告文をコピー」を使ってください</small></button>
+      <button class="b wh" id="copyRow">台帳用に1行コピー<small>総務用：運用管理表「カスハラ対応記録台帳」に貼り付け</small></button>
+      <button class="b gray" id="clearRec">この端末から消去</button>
+    </div>
+  </section>
+
+  <!-- ===== SETTINGS ===== -->
+  <section id="tab-set" class="hide">
+    <div class="card">
+      <p class="q">相談先の登録</p>
+      <p class="qs">最初に1回だけ登録してください。画面下のボタンから、すぐに電話できるようになります。登録内容はこの端末の中だけに保存されます。</p>
+      <label class="f" for="s_me">自分の名前</label><input class="t" id="s_me">
+      <label class="f" for="s_bossn">上司・管理職　名前</label><input class="t" id="s_bossn">
+      <label class="f" for="s_bosst">上司・管理職　電話</label><input class="t" type="tel" id="s_bosst" placeholder="090-0000-0000">
+      <label class="f" for="s_bossm">上司・管理職　メール</label><input class="t" type="email" id="s_bossm">
+      <label class="f" for="s_soun">総務　名前</label><input class="t" id="s_soun">
+      <label class="f" for="s_sout">総務　電話</label><input class="t" type="tel" id="s_sout">
+      <label class="f" for="s_soum">総務　メール</label><input class="t" type="email" id="s_soum">
+      <div class="btns" style="margin-top:16px"><button class="b navy" id="saveSet">保存する</button></div>
+    </div>
+    <div class="card">
+      <h2 style="margin-top:0">会社代表</h2>
+      <div class="kv"><b>TEL</b><span><a href="tel:0924084610">092-408-4610</a></span><b>受付</b><span><a href="tel:0120636060">0120-63-6060</a></span><b>営業時間</b><span>月〜金 9:00〜18:00（土日祝休）</span></div>
+      <h2>このアプリについて</h2>
+      <p class="note" style="margin:0">2026年10月1日施行「カスタマーハラスメント対策規程」と「カスハラ対応ミニガイド」に基づいています。カスハラへの対応は、会社として組織的に行います。相談したことで不利益になることはありません。</p>
+    </div>
+  </section>
+</div>
+
+<div class="sos"><div class="in">
+  <a class="p110" href="tel:110" id="call110"><b>110番</b>警察へ電話</a>
+  <a class="boss" id="callBoss" href="#">上司・管理職<br>へ電話</a>
+  <a class="soumu" id="callSoumu" href="#">総務<br>へ電話</a>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+var $=function(id){return document.getElementById(id)};
+var store={get:function(k){try{return JSON.parse(localStorage.getItem('kh_'+k)||'null')}catch(e){return null}},
+           set:function(k,v){try{localStorage.setItem('kh_'+k,JSON.stringify(v))}catch(e){}},
+           del:function(k){try{localStorage.removeItem('kh_'+k)}catch(e){}}};
+function toast(t){var e=$('toast');e.textContent=t;e.classList.add('on');setTimeout(function(){e.classList.remove('on')},1800)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+/* ---------- settings ---------- */
+var SET_FIELDS=['me','bossn','bosst','bossm','soun','sout','soum'];
+var cfg=store.get('cfg')||{};
+function applyCfg(){
+  SET_FIELDS.forEach(function(k){$('s_'+k).value=cfg[k]||''});
+  setCall($('callBoss'),cfg.bosst,'上司・管理職');
+  setCall($('callSoumu'),cfg.sout,'総務');
+  if(cfg.me && !$('r_me').value) $('r_me').value=cfg.me;
+}
+function setCall(a,tel,label){
+  var t=(tel||'').replace(/[^0-9+]/g,'');
+  if(t){a.href='tel:'+t;a.classList.remove('dim');a.onclick=null}
+  else{a.href='#';a.classList.add('dim');a.onclick=function(e){e.preventDefault();switchTab('set');toast(label+'の電話番号を登録してください')}}
+}
+$('saveSet').onclick=function(){SET_FIELDS.forEach(function(k){cfg[k]=$('s_'+k).value.trim()});store.set('cfg',cfg);applyCfg();toast('保存しました')};
+
+/* ---------- tabs ---------- */
+function switchTab(n){
+  document.querySelectorAll('.tabs button').forEach(function(b){b.classList.toggle('act',b.dataset.tab===n)});
+  ['navi','rec','set'].forEach(function(t){$('tab-'+t).classList.toggle('hide',t!==n)});
+  if(n==='rec') fillFromNavi();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('.tabs button').forEach(function(b){b.onclick=function(){switchTab(b.dataset.tab)}});
+
+/* ---------- timer ---------- */
+var t0=null,tick=null;
+function startTimer(){ if(t0) return; t0=Date.now(); $('timer').classList.add('on');
+  tick=setInterval(function(){var s=Math.floor((Date.now()-t0)/1000);$('timer').textContent='対応 '+Math.floor(s/60)+':'+('0'+s%60).slice(-2)},1000)}
+function stopTimer(){ if(tick) clearInterval(tick); tick=null }
+function elapsedMin(){return t0?Math.max(1,Math.round((Date.now()-t0)/60000)):''}
+
+/* ---------- navi ---------- */
+var nav={way:'',flags:[],start:null,hist:[]};
+var PH={
+ listen:['話を聞くとき','恐れ入りますが、状況を確認いたしますので、詳しくお聞かせいただけますか。'],
+ warn:['注意するとき','ご意見は確認いたしますが、威圧的な言動が続く場合は対応が難しくなります。'],
+ hand:['引き継ぐとき','私だけでは判断できないため、担当者・上司に確認のうえ改めてご連絡いたします。'],
+ end:['対応を終了するとき','本日の対応はここで終了させていただきます。会社で確認のうえ、改めてご連絡いたします。'],
+ rec:['録音するとき','恐れ入りますが、正確に確認するため、録音させていただきます。'],
+ cb:['電話を区切るとき','確認のうえ、こちらから折り返しご連絡いたします。']
+};
+function phr(k,red){var p=PH[k];return '<div class="phr'+(red?' r':'')+'"><span class="lb">'+p[0]+'</span>「'+p[1]+'」</div>'}
+var WAYTIP={
+ '電話':['最初に相手の名前・用件をメモ','長くなったら「確認して折り返します」と区切る','録音するときは、ひと言伝えてから'],
+ 'メール':['すぐに返信しない。落ち着いて内容を確認','感情的な表現は使わない。必要なら上司に確認してから送る','やり取りは削除せずに保存'],
+ '対面・訪問':['できるだけ一人で対応しない（複数で）','出入口に近い位置に座る','危険を感じたら、すぐに退出']
+};
+var SCREENS={
+ home:function(){return '<div class="card"><span class="step">START</span><p class="q">いま、お客様・取引先の対応中ですか？</p><p class="qs">対応の方法を選ぶと、次にやることを順番に案内します。</p><div class="btns">'+
+   '<button class="b navy" data-go="danger" data-way="電話">電話で対応中</button>'+
+   '<button class="b navy" data-go="danger" data-way="対面・訪問">対面・訪問で対応中</button>'+
+   '<button class="b navy" data-go="danger" data-way="メール">メールの対応中</button>'+
+   '<button class="b wh" data-go="after">対応が終わった（記録をつける）</button></div></div>'+
+   '<div class="card yel"><p class="q" style="font-size:17px">まず覚える3つ</p><ul class="pt"><li><b>正当な苦情</b>には誠実に対応</li><li><b>不当な言動</b>には毅然と対応</li><li><b>安全を最優先</b>。危険なら、すぐ離れる</li></ul></div>'},
+ danger:function(){return '<div class="card"><span class="step r">確認 1</span><p class="q">身の危険を感じていますか？</p><p class="qs">暴力・脅迫・物を投げる・帰してもらえない など</p><div class="btns two">'+
+   '<button class="b red" data-go="safety">はい</button><button class="b wh" data-go="listen">いいえ</button></div></div>'+tips()},
+ safety:function(){return '<div class="card red"><span class="step r">最優先</span><p class="q" style="color:var(--red)">安全を確保してください</p><ul class="pt"><li><b>すぐにその場を離れる</b>（電話なら切ってよい）</li><li>周りの人に声をかけ、<b>一人にならない</b></li><li>必要に応じて <b>110番</b></li><li>落ち着いたら、上司・管理職へ連絡</li></ul><p class="note" style="margin:8px 0 0">ボタンで発信できない場合は、電話アプリで <b style="color:var(--red);font-size:18px">110</b> を押してください。</p>'+
+   '<div class="btns" style="margin-top:14px"><a class="b red" href="tel:110">110番に電話する</a><button class="b navy" data-call="boss">上司・管理職へ電話</button><button class="b wh" data-go="finish" data-st="外部相談">落ち着いた → 記録をつける</button></div></div>'},
+ listen:function(){return '<div class="card"><span class="step">STEP 1</span><p class="q">落ち着いて、話を聞く</p><p class="qs">話をさえぎらず、「何が起きたか」「何を求めているか」を確認します。</p>'+phr('listen')+
+   (nav.way==='電話'?phr('rec'):'')+
+   '<p class="q" style="font-size:17px;margin-top:16px">相手の言動に、次のものはありますか？</p><p class="qs">当てはまるものにチェック（なければそのまま「次へ」）</p><ul class="chk">'+
+   ['暴言・人格否定・大声で怒鳴る','脅し・威嚇','長時間の拘束・同じ要求の繰り返し','契約外の要求・金銭の要求','個人の連絡先を求める・無断の訪問','SNSへの投稿をほのめかす'].map(function(x){return '<li><label><input type="checkbox" value="'+x+'"'+(nav.flags.indexOf(x)>=0?' checked':'')+'>'+x+'</label></li>'}).join('')+
+   '</ul><div class="btns" style="margin-top:14px"><button class="b navy" data-go="judge">次へ</button></div></div>'},
+ judge:function(){
+   if(!nav.flags.length) return '<div class="card"><span class="step">STEP 2</span><p class="q">通常の要望・苦情として誠実に対応</p><p class="qs">口調が厳しくても、内容が正当なら誠実に対応します。当社のミスなら素直に認めます。</p>'+
+     '<ul class="pt"><li>できること・できないことを、<b>会社のルールに沿って</b>説明</li><li><b>その場で約束しない</b>（値引き・補償・「できます」）</li><li>判断に迷ったら引き継ぐ</li></ul>'+phr('hand')+
+     '<div class="btns" style="margin-top:14px"><button class="b navy" data-go="finish" data-st="終了">対応が終わった → 記録</button><button class="b wh" data-go="warn">途中で不当な言動が出た</button></div></div>';
+   return '<div class="card"><span class="step">STEP 2</span><p class="q">ルールに沿って説明する</p><p class="qs">チェックした言動：<b>'+nav.flags.map(esc).join('／')+'</b></p><ul class="pt"><li>その場で約束しない。できないことは、はっきり伝える</li><li>個人の連絡先は教えない</li></ul><div class="btns" style="margin-top:14px"><button class="b navy" data-go="warn">次へ（注意する）</button></div></div>'},
+ warn:function(){return '<div class="card"><span class="step">STEP 3</span><p class="q">不適切な言動には、冷静に注意する</p><p class="qs">落ち着いて、ゆっくり、はっきり伝えます。</p>'+phr('warn',1)+
+   '<p class="q" style="font-size:17px;margin-top:14px">注意したあと、言動は改善しましたか？</p><div class="btns two"><button class="b wh" data-go="finish" data-st="終了">改善した</button><button class="b red" data-go="handover">改善しない</button></div></div>'},
+ handover:function(){return '<div class="card"><span class="step">STEP 4</span><p class="q">対応を区切って、上司・管理職へ引き継ぐ</p><p class="qs">一人で対応し続けないでください。対応の終了・制限は会社が判断します。</p>'+
+   (nav.way==='電話'?phr('cb'):'')+phr('hand')+phr('end',1)+
+   '<div class="btns" style="margin-top:14px"><button class="b navy" data-call="boss">上司・管理職へ電話</button><button class="b wh" data-go="finish" data-st="対応中">引き継いだ → 記録をつける</button><button class="b gray" data-go="safety">危険を感じる</button></div></div>'},
+ after:function(){nav.way=nav.way||'';return SCREENS.finish()},
+ finish:function(){stopTimer();return '<div class="card"><span class="step">STEP 5</span><p class="q">おつかれさまでした。記録を残しましょう</p><p class="qs">記録は、あとで自分と会社を守る材料になります。記憶が新しいうちに。</p>'+
+   '<ul class="pt"><li>メモ・メール・録音は<b>消さずに保存</b></li><li>報告は「弱さ」ではなく「ルール」です</li></ul>'+
+   '<div class="btns" style="margin-top:14px"><button class="b red" data-tab-go="rec">対応記録を入力する</button><button class="b gray" data-reset>最初の画面に戻る</button></div></div>'+
+   '<div class="card"><p class="q" style="font-size:16px">これだけはしない</p><div class="ng"><div>感情的に言い返す</div><div>個人の連絡先を教える</div><div>独断で値引き・補償</div><div>その場しのぎの「できます」</div><div>一人で抱え込む</div><div>SNSで反応する</div></div></div>'}
+};
+function tips(){if(!nav.way||!WAYTIP[nav.way])return '';return '<div class="card yel"><p class="q" style="font-size:16px">'+nav.way+'での注意点</p><ul class="pt">'+WAYTIP[nav.way].map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul></div>'}
+var cur='home';
+function render(){
+  var html=SCREENS[cur]();
+  if(cur!=='home') html+='<button class="back" data-back>← 1つ前に戻る</button>';
+  if(['listen','judge','warn','handover'].indexOf(cur)>=0) html+=tips();
+  $('navi').innerHTML=html;
+  $('memoCard').classList.toggle('hide',cur==='home');
+  bind();
+}
+function go(n){nav.hist.push(cur);cur=n;render();window.scrollTo(0,0);saveNav()}
+function bind(){
+  $('navi').querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){
+    if(b.dataset.way){nav.way=b.dataset.way;nav.start=new Date().toISOString();startTimer()}
+    if(cur==='listen'){nav.flags=[].slice.call($('navi').querySelectorAll('ul.chk input:checked')).map(function(i){return i.value})}
+    if(b.dataset.st) nav.status=b.dataset.st;
+    go(b.dataset.go)}});
+  $('navi').querySelectorAll('[data-call]').forEach(function(b){b.onclick=function(){$('callBoss').click()}});
+  $('navi').querySelectorAll('[data-tab-go]').forEach(function(b){b.onclick=function(){switchTab(b.dataset.tabGo)}});
+  $('navi').querySelectorAll('[data-reset]').forEach(function(b){b.onclick=resetNavi});
+  $('navi').querySelectorAll('[data-back]').forEach(function(b){b.onclick=function(){cur=nav.hist.pop()||'home';render()}});
+}
+function resetNavi(){nav={way:'',flags:[],start:null,hist:[]};cur='home';t0=null;stopTimer();$('timer').classList.remove('on');$('memo').value='';store.del('memo');render()}
+function saveNav(){store.set('memo',$('memo').value)}
+$('memo').addEventListener('input',saveNav);
+
+/* ---------- record ---------- */
+var R=['date','time','min','way','who','words','sum','req','act','me','with','to','st','self'];
+function pad(n){return ('0'+n).slice(-2)}
+function fillFromNavi(){
+  var d=nav.start?new Date(nav.start):null;
+  if(d&&!$('r_date').value){$('r_date').value=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());$('r_time').value=pad(d.getHours())+':'+pad(d.getMinutes())}
+  if(!$('r_date').value){var n=new Date();$('r_date').value=n.getFullYear()+'-'+pad(n.getMonth()+1)+'-'+pad(n.getDate())}
+  if(!$('r_min').value&&t0) $('r_min').value=elapsedMin();
+  if(!$('r_way').value&&nav.way) $('r_way').value=(nav.way==='対面・訪問'?'対面':nav.way);
+  var m=$('memo').value.trim(); if(m&&$('r_words').value.indexOf(m)<0) $('r_words').value=($('r_words').value?$('r_words').value+'\n':'')+m;
+  if(nav.flags.length&&!$('r_sum').value) $('r_sum').value='該当した言動：'+nav.flags.join('／');
+  if(nav.status) $('r_st').value=nav.status;
+  if(cfg.me&&!$('r_me').value) $('r_me').value=cfg.me;
+  saveRec();
+}
+function rec(){var o={};R.forEach(function(k){o[k]=$('r_'+k).value.trim()});return o}
+function saveRec(){store.set('rec',rec())}
+R.forEach(function(k){$('r_'+k).addEventListener('input',saveRec);$('r_'+k).addEventListener('change',saveRec)});
+function fmtDate(s){return s?s.replace(/-/g,'/'):''}
+function reportText(){var r=rec();return ['【カスハラ対応報告】',
+ '発生日時：'+fmtDate(r.date)+' '+r.time,'対応時間：'+(r.min?r.min+'分':''),'手段：'+r.way,'相手方：'+r.who,
+ '','■ 言われた言葉・されたこと',r.words,'','■ 内容の要約',r.sum,'','■ 要求内容',r.req,'','■ 対応内容',r.act,'',
+ '対応者：'+r.me,'同席者：'+r.with,'報告先：'+r.to,'対応状況：'+r.st,(r.self?'\n■ 自分への影響\n'+r.self:''),'','※個人情報を含むため、閲覧は上司・管理職と総務のみ'].join('\n')}
+function oneLine(s){return (s||'').replace(/[\t\r]/g,' ').replace(/\n/g,' / ')}
+function rowTSV(){var r=rec();var words=r.words?'「'+oneLine(r.words)+'」 ':'';
+ // 台帳の列順：No 発生日 時刻 対応時間 手段 相手方 内容の要約 要求内容 対応内容 対応者 同席者 報告先 報告日 対応状況 再発防止メモ
+ var today=new Date();var rd=today.getFullYear()+'/'+pad(today.getMonth()+1)+'/'+pad(today.getDate());
+ return ['',fmtDate(r.date),r.time,r.min,r.way,oneLine(r.who),words+oneLine(r.sum),oneLine(r.req),oneLine(r.act),r.me,r.with,r.to,rd,r.st,''].join('\t')}
+function copy(t,msg){
+  function fb(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');toast(msg)}catch(e){toast('コピーできませんでした')}a.remove()}
+  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(function(){toast(msg)},fb)}else fb();
+}
+function needOk(){var r=rec();if(!r.date||!r.way||!(r.words||r.sum)){toast('発生日・手段・内容を入力してください');return false}return true}
+$('copyText').onclick=function(){if(needOk())copy(reportText(),'報告文をコピーしました')};
+$('copyRow').onclick=function(){if(needOk())copy(rowTSV(),'台帳用の1行をコピーしました')};
+$('sendMail').onclick=function(){
+  if(!needOk())return;
+  var to=[cfg.bossm,cfg.soum].filter(Boolean).join(',');
+  if(!to) toast('宛先が未登録です。メール作成後に宛先を入力してください');
+  var r=rec();
+  location.href='mailto:'+encodeURIComponent(to).replace(/%2C/g,',')+'?subject='+encodeURIComponent('【カスハラ対応報告】'+fmtDate(r.date)+' '+(r.who||''))+'&body='+encodeURIComponent(reportText());
+};
+var clearArm=false;
+$('clearRec').onclick=function(){
+  if(!clearArm){clearArm=true;$('clearRec').textContent='報告は済みましたか？もう一度押すと消去します';$('clearRec').classList.add('red');
+    setTimeout(function(){clearArm=false;$('clearRec').textContent='この端末から消去';$('clearRec').classList.remove('red')},5000);return}
+  clearArm=false;$('clearRec').textContent='この端末から消去';$('clearRec').classList.remove('red');
+  R.forEach(function(k){$('r_'+k).value=''});$('r_st').value='対応中';store.del('rec');resetNavi();toast('消去しました');
+};
+
+/* ---------- init ---------- */
+var saved=store.get('rec'); if(saved) R.forEach(function(k){if(saved[k]!=null)$('r_'+k).value=saved[k]});
+var m=store.get('memo'); if(m) $('memo').value=m;
+applyCfg(); render();
+})();
+</script>
+
+</body>
+</html>
